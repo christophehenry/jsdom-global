@@ -26,17 +26,18 @@ module.exports = function globalJsdom (html, options) {
   }
 
   var jsdom = require('jsdom')
-  var document = new jsdom.JSDOM(html, options)
-  var window = document.window
+  var jsdomInstance = new jsdom.JSDOM(html, options)
+  var window = jsdomInstance.window
 
   KEYS.forEach(function (key) {
     global[key] = window[key]
   })
 
+  global.jsdom = jsdomInstance
   global.document = window.document
   global.window = window
   window.console = global.console
-  document.destroy = cleanup
+  jsdomInstance.destroy = cleanup
 
   function cleanup () {
     KEYS.forEach(function (key) { delete global[key] })
